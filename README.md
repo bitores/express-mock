@@ -9,7 +9,7 @@
 ```
 const express = require('express')
 
-const mockMiddleware = require("../src/index.js");
+const mockMiddleware = require("@huangzj/express-mock");
 
 const app = express();
 

@@ -1,0 +1,32 @@
+{
+  "name": "express-mock",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitores/express-mock.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bitores/express-mock/issues"
+  },
+  "homepage": "https://github.com/bitores/express-mock#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.1",
+    "chokidar": "^2.0.4",
+    "debug": "^4.0.1",
+    "http-proxy-middleware": "^0.19.0"
+  },
+  "devDependencies": {
+    "express": "^4.16.3"
+  }
+}

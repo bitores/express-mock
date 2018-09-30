@@ -54,7 +54,7 @@ function createMockHandler(method, path, value) {
       res.json(value);
     }
   };
-
+  Object.defineProperty(fn, 'name',{value:'expressMockMiddleware'})
   return fn;
 }
 
@@ -76,11 +76,11 @@ function createProxy(method, pathPattern, target) {
 
     return path.replace(req.originalUrl.replace(matchPath, ''), targetPath);
   };
-  const fn = proxy(filter, {
+  let fn = proxy(filter, {
     target: realTarget,
     pathRewrite
   });
-
+  Object.defineProperty(fn, 'name',{value:'expressMockMiddleware'})
   return fn;
 }
 
@@ -111,7 +111,6 @@ function startMock() {
 
 function realApplyMock() {
   const config = getConfig();
-
 
   const proxyRules = [];
   const mockRules = [];
@@ -149,39 +148,15 @@ function realApplyMock() {
       });
     }
 
-    proxyRules.forEach(proxy => {
-      // router[proxy.method](proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
-      router.use(proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
-    });
-
-    mockRules.forEach(mock => {
-
-      // router[mock.method](
-      //   mock.path,
-      //   createMockHandler(mock.method, mock.path, mock.target),
-      // );
-      router.use(mock.path, createMockHandler(mock.method, mock.path, mock.target))
-    });
   });
 
-  // 调整 stack，把 historyApiFallback 放到最后
-  let lastIndex = null;
-  console.log("router len", router.stack.length)
-
-  router.stack.forEach((item, index) => {
-    console.log(item)
-    if (item.name === 'bound dispatch') {
-      lastIndex = index;
-    }
+  proxyRules.forEach(proxy => {
+    router.use(proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
   });
-  const mockAPILength = router.stack.length - 1 - lastIndex;
-  if (lastIndex && lastIndex > 0) {
-    const newStack = router.stack;
-    newStack.push(newStack[lastIndex - 1]);
-    newStack.push(newStack[lastIndex]);
-    newStack.splice(lastIndex - 1, 2);
-    router.stack = newStack;
-  }
+
+  mockRules.forEach(mock => {
+    router.use(mock.path, createMockHandler(mock.method, mock.path, mock.target))
+  });
 
   const watcher = chokidar.watch([configFile, mockDir], {
     ignored: /node_modules/,
@@ -191,10 +166,16 @@ function realApplyMock() {
     console.log(chalk.green('CHANGED'), path.replace(appDirectory, '.'));
     watcher.close();
 
-    console.log('del old config file...')
-
     // 删除旧的 mock api
-    router.stack.splice(lastIndex - 1, mockAPILength);
+    // 调整 stack，把 historyApiFallback 放到最后
+   const historyApiStack = [];
+   router.stack.forEach((item, index) => {
+     if (item.name !== 'expressMockMiddleware') {
+       historyApiStack.push(item)
+     }
+   });
+
+   router.stack = [].concat(historyApiStack);
 
     startMock();
   });
@@ -234,6 +215,8 @@ function outputError() {
   console.log();
 }
 
-startMock();
+module.exports = function(req, res){
+  startMock();
 
-module.exports = router;
+  return router;
+}

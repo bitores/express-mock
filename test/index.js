@@ -3,14 +3,18 @@ const express = require('express')
 const mockMiddleware = require("../src/index.js");
 
 const app = express();
+const router = express.Router()
 
-app.use('/index', function (req, res) {
+router.use('/index', function (req, res) {
   res.end('index')
 })
 
-app.use('/', mockMiddleware)
+app.use('/', router)
 
-const server = app.listen(8019, function () {
+
+app.use('/mock', mockMiddleware())
+
+const server = app.listen(8000, function () {
 
   var host = server.address().address
   var port = server.address().port

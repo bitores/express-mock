@@ -1,12 +1,13 @@
 # express-mock
 
-> mock middleware for express
 
+** install **
 
-- npm i --save @huangzj/express-mock
-- const mock = require('express-mock')
-- expressApp.use('/', mock)
-- .mock.js
+> npm i --save @huangzj/express-mock
+
+- const mockMi = require('@huangzj/express-mock')
+- expressApp.use('/', mock())
+- create .mock.js
 
 ```
 # .mock.js

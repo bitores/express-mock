@@ -45,7 +45,8 @@ function getConfig() {
 }
 
 function createMockHandler(method, path, value) {
-  return function mockHandler(...args) {
+  const fn = function (...args) {
+
     const res = args[1];
     if (typeof value === 'function') {
       value(...args);
@@ -53,6 +54,8 @@ function createMockHandler(method, path, value) {
       res.json(value);
     }
   };
+
+  return fn;
 }
 
 function createProxy(method, pathPattern, target) {
@@ -73,11 +76,12 @@ function createProxy(method, pathPattern, target) {
 
     return path.replace(req.originalUrl.replace(matchPath, ''), targetPath);
   };
-
-  return proxy(filter, {
+  const fn = proxy(filter, {
     target: realTarget,
     pathRewrite
   });
+
+  return fn;
 }
 
 function startMock() {
@@ -146,15 +150,17 @@ function realApplyMock() {
     }
 
     proxyRules.forEach(proxy => {
-      router[proxy.method](proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
+      // router[proxy.method](proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
+      router.use(proxy.path, createProxy(proxy.method, proxy.path, proxy.target))
     });
 
     mockRules.forEach(mock => {
 
-      router[mock.method](
-        mock.path,
-        createMockHandler(mock.method, mock.path, mock.target),
-      );
+      // router[mock.method](
+      //   mock.path,
+      //   createMockHandler(mock.method, mock.path, mock.target),
+      // );
+      router.use(mock.path, createMockHandler(mock.method, mock.path, mock.target))
     });
   });
 

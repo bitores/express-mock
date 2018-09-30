@@ -1,7 +1,7 @@
 {
   "name": "@huangzj/express-mock",
   "version": "1.0.0",
-  "description": "",
+  "description": "mock for express middleware",
   "main": "src/index.js",
   "directories": {
     "test": "test"
@@ -9,11 +9,17 @@
   "scripts": {
     "test": "node test/index.js"
   },
+  "keywords": [
+    "express-mock",
+    "express",
+    "mock",
+    "middleware"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bitores/express-mock.git"
   },
-  "author": "",
+  "author": "huangzj",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bitores/express-mock/issues"

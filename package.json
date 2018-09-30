@@ -1,5 +1,5 @@
 {
-  "name": "express-mock",
+  "name": "@huangzj/express-mock",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",

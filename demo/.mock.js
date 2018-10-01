@@ -13,38 +13,39 @@ module.exports = {
         data: [],
         msg: "323"
     },
-    'GET /api/:id': (req, res) => {
-        res.json({
-            id: res.params.id
-        })
+    'GET /api/:id': (ctx, next) => {
+        ctx.body = {
+            id: ctx.params.id
+        }
+
     },
 
-    'POST /api/users': (req, res) => {
-        const id = parseInt(req.query.id);
+    'POST /api/users': (ctx) => {
+        const id = parseInt(ctx.query.id);
         switch (id) {
             case 1:
-                res.json({
+                ctx.body = {
                     success: true,
                     data: {
                         id: id
                     },
-                });
+                };
                 break;
             default:
-                res.json({
+                ctx.body = {
                     success: true,
                     data: {
                         id: id
                     },
-                });
+                };
                 break;
         }
     },
 
     // Support for custom functions, the API is the same as express@4
-    'POST /api/users/create': (req, res) => {
-        res.end('OK');
+    'POST /api/users/create': (ctx) => {
+        ctx.body = "OK";
     },
     // /cnode/api 会被代理到 https://cnodejs.org/api, 不能代理 https
-    'GET /mock/cnode/(.*)': 'https://cnodejs.org'
+    'GET /cnode/(.*)': 'https://cnodejs.org'
 };

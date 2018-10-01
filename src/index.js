@@ -54,7 +54,9 @@ function createMockHandler(method, path, value) {
       res.json(value);
     }
   };
-  Object.defineProperty(fn, 'name',{value:'expressMockMiddleware'})
+  Object.defineProperty(fn, 'name', {
+    value: 'expressMockMiddleware'
+  })
   return fn;
 }
 
@@ -66,11 +68,12 @@ function createProxy(method, pathPattern, target) {
   const realTarget = [parsedUrl.protocol, parsedUrl.host].join('//');
   const targetPath = parsedUrl.path;
 
+  let pattern = pathPattern;
   const pathRewrite = (path, req) => {
     let matchPath = req.originalUrl;
-    const matches = matchPath.match(pathPattern);
+    const matches = matchPath.match(pattern);
 
-    if (matches.length > 1) {
+    if (matches !== null && matches.length > 1) {
       matchPath = matches[1];
     }
 
@@ -78,9 +81,12 @@ function createProxy(method, pathPattern, target) {
   };
   let fn = proxy(filter, {
     target: realTarget,
+    changeOrigin: true,
     pathRewrite
   });
-  Object.defineProperty(fn, 'name',{value:'expressMockMiddleware'})
+  Object.defineProperty(fn, 'name', {
+    value: 'expressMockMiddleware'
+  })
   return fn;
 }
 
@@ -118,7 +124,6 @@ function realApplyMock() {
 
   Object.keys(config).forEach(key => {
     const keyParsed = parseKey(key);
-    // assert(!!app[keyParsed.method], `method of ${key} is not valid`);
     assert(!!router[keyParsed.method], `method of ${key} is not valid`);
     assert(
       typeof config[key] === 'function' ||
@@ -168,14 +173,14 @@ function realApplyMock() {
 
     // 删除旧的 mock api
     // 调整 stack，把 historyApiFallback 放到最后
-   const historyApiStack = [];
-   router.stack.forEach((item, index) => {
-     if (item.name !== 'expressMockMiddleware') {
-       historyApiStack.push(item)
-     }
-   });
+    const historyApiStack = [];
+    router.stack.forEach((item, index) => {
+      if (item.name !== 'expressMockMiddleware') {
+        historyApiStack.push(item)
+      }
+    });
 
-   router.stack = [].concat(historyApiStack);
+    router.stack = [].concat(historyApiStack);
 
     startMock();
   });
@@ -215,7 +220,7 @@ function outputError() {
   console.log();
 }
 
-module.exports = function(req, res){
+module.exports = function (req, res) {
   startMock();
 
   return router;

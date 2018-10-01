@@ -1,6 +1,6 @@
 {
   "name": "@huangzj/express-mock",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "mock for express middleware",
   "main": "src/index.js",
   "directories": {
